@@ -67,6 +67,7 @@ public:
     void rollbackOldFirmware(const std::string& executableAppPath, const std::string& backupAppName, const std::string& originalAppName, const std::string& command);
     std::string getIPAddress();
     void sendMsg2Server(std::string cmdCode, std::string data);
+    bool startStationSoftware();
 };
 
 int main() {
@@ -106,34 +107,19 @@ void UdpClient::ProcessData (const char* data, std::size_t length)
     
     switch(rxcmd)
     {
-        // start station software    
+        // start station software
         case 10:
         {
-            std::vector<std::string> dataTokens;
-			std::stringstream ss(pField.Field(3));
-			std::string token;
-
-			while (std::getline(ss, token, ','))
-			{
-				dataTokens.push_back(token);
-			}
-
-			if (dataTokens.size() == 2)
+            std::cout << "Running... Start Station Software" << std::endl;
+            bool ret = startStationSoftware();
+            if (ret)
             {
-                if (firmwareUpdate(dataTokens[0], dataTokens[1]))
-                {
-                    std:: cout << "Firmware update successfully." << std::endl;
-                    sendMsg2Server("10", "99");
-                }
-                else
-                {
-                    std:: cout << "Firmware update failed." << std::endl;
-                    sendMsg2Server("10", "98");
-                }
+                std::cout << "Start the station software successfully." << std::endl;
+                sendMsg2Server("10", "99");
             }
             else
             {
-                std:: cout << "Invalid parameters in received data." << std::endl;
+                std::cout << "Failed to start the station software." << std::endl;
                 sendMsg2Server("10", "98");
             }
             break;
@@ -141,6 +127,7 @@ void UdpClient::ProcessData (const char* data, std::size_t length)
         // Restart Station PC 
         case 12:
         {
+            std::cout << "Running... Restart Station PC" << std::endl;
             result = std::system("sudo shutdown -r now");
             // Check the result of the system call
             if (result == 0) {
@@ -154,6 +141,7 @@ void UdpClient::ProcessData (const char* data, std::size_t length)
         // shutdown station PC
         case 14:
         {
+            std::cout << "Running... Shutdown Station PC" << std::endl;
             result = std::system("sudo shutdown -h -F now");
             if (result == 0) {
                 std:: cout << "shutdown executed successfully" << std::endl;
@@ -166,7 +154,44 @@ void UdpClient::ProcessData (const char* data, std::size_t length)
         // stop sunpark admin 
         case 16:
         {
+            std::cout << "Running... Stop Admin Software" << std::endl;
             std::exit(0);
+            break;
+        }
+        // update firmware
+        case 307:
+        {
+            std::cout << "Running... Upgrade the Station Software" << std::endl;
+            std::vector<std::string> dataTokens;
+			std::stringstream ss(pField.Field(3));
+			std::string token;
+
+			while (std::getline(ss, token, ','))
+			{
+				dataTokens.push_back(token);
+			}
+
+			if (dataTokens.size() == 2)
+            {
+                std::replace(dataTokens[0].begin(), dataTokens[0].end(), '\\', '/');
+                std::cout << "Path : " << dataTokens[0] << std::endl;
+                std::cout << "File name : " << dataTokens[1] << std::endl;
+                if (firmwareUpdate(dataTokens[0], dataTokens[1]))
+                {
+                    std:: cout << "Firmware update successfully." << std::endl;
+                    sendMsg2Server("307", "99");
+                }
+                else
+                {
+                    std:: cout << "Firmware update failed." << std::endl;
+                    sendMsg2Server("307", "98");
+                }
+            }
+            else
+            {
+                std:: cout << "Invalid parameters in received data." << std::endl;
+                sendMsg2Server("307", "98");
+            }
             break;
         }
         default:
@@ -532,3 +557,66 @@ void UdpClient::sendMsg2Server(std::string cmdCode, std::string data)
     startSend(dStr);
 }
 
+
+bool UdpClient::startStationSoftware()
+{
+    std::string appName = "linuxpbs";
+    std::string executableAppPath = findExecutableFilePath(appName);
+    std::string command = "x-terminal-emulator -e " + executableAppPath + " &";
+
+    if (isProcessRunning(appName))
+    {
+        std::cout << "Process is running and kill the process." << std::endl;
+        if (killProcess(appName))
+        {
+            usleep(1000000);
+        }
+        else
+        {
+            std::cout << "Unable to kill the process." << std::endl;
+        }
+    }
+
+    if (!isProcessRunning(appName))
+    {
+        mode_t permissions = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
+        std::cout << "Updating the executable file permissions..." << std::endl;
+        int retPermissions = chmod(executableAppPath.c_str(), permissions);
+        if (retPermissions == 0)
+        {
+            std::cout << "Successfully updated the executable file permissions." << std::endl;
+            std::cout << "Running the new firmware..." << std::endl;
+            int result = std::system(command.c_str());
+            if (result == 0)
+            {
+                usleep(1000000);
+                if (isProcessRunning(appName))
+                {
+                    std::cout << "Process is running." << std::endl;
+                    return true;
+                }
+                else
+                {
+                    std::cout << "Process not running." << std::endl;
+                    return false;
+                }
+            }
+            else
+            {
+                std::cout << "Unable to use command to start station software." << std::endl;
+                return false;
+            }
+        }
+        else
+        {
+            std::cout << "Unable to change the executable file permission." << std::endl;
+            return false;
+        }
+        
+    }
+    else
+    {
+        std::cout << "Process not running." << std::endl;
+        return false;
+    }
+}
