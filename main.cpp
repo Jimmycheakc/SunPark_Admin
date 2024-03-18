@@ -179,18 +179,18 @@ void UdpClient::ProcessData (const char* data, std::size_t length)
                 if (firmwareUpdate(dataTokens[0], dataTokens[1]))
                 {
                     std:: cout << "Firmware update successfully." << std::endl;
-                    sendMsg2Server("307", "99");
+                    sendMsg2Server("308", "99");
                 }
                 else
                 {
                     std:: cout << "Firmware update failed." << std::endl;
-                    sendMsg2Server("307", "98");
+                    sendMsg2Server("308", "98");
                 }
             }
             else
             {
                 std:: cout << "Invalid parameters in received data." << std::endl;
-                sendMsg2Server("307", "98");
+                sendMsg2Server("308", "98");
             }
             break;
         }
@@ -271,7 +271,7 @@ void UdpClient::rollbackOldFirmware(const std::string& executableAppPath, const 
 
     if (ret == 0)
     {
-        usleep(1000000);
+        usleep(20000000);
         if (isProcessRunning(originalAppName))
         {
             std::cout << "Successfully rollback the old firmware and run." << std::endl;
@@ -441,12 +441,12 @@ bool UdpClient::firmwareUpdate(const std::string& firmwarePath, const std::strin
             std::string password = "Tdxh638*";
             std::string outputFolderPath = executableAppDirectoryPath;
 
+            std::string command = "x-terminal-emulator -e " + executableAppPath + " &";
+
             // 2. Copy the firmware from other PC
             if (copyFirmware(firmwareName, mountPoint, firmwarePath, username, password, outputFolderPath))
             {
                 std::cout << "Successfully copy the firmware." << std::endl;
-
-                std::string command = "x-terminal-emulator -e " + executableAppPath + " &";
 
                 // Define the desired permissions (e.g., 0755 for read/execute permissions for owner, group, and others)
                 mode_t permissions = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
@@ -459,17 +459,18 @@ bool UdpClient::firmwareUpdate(const std::string& firmwarePath, const std::strin
                     int result = std::system(command.c_str());
                     if (result == 0)
                     {
-                        usleep(1000000);
+                        usleep(20000000);
                         if (isProcessRunning(originalAppName))
                         {
                             // 3. Run the new app
                             std::cout << "Successfully run the new firmware." << std::endl;
                             std::cout << "Move backup firmware to backup folder." << std::endl;
-                            std::string directoryPath = outputFolderPath + "/firmwarebackup/";
+                            std::string directoryPath = "/home/root/carpark/FirmwareBackUp";
 
                             std::size_t lastSlashIdx = backupAppName.find_last_of("/");
-                            std::string destBackUpDirectory = backupAppName.substr(0, lastSlashIdx);
-                            std::string destPath = destBackUpDirectory + "/firmwarebackup" + backupAppName.substr(lastSlashIdx);
+                            std::string destPath = directoryPath + backupAppName.substr(lastSlashIdx);
+
+                            std::cout << "Backup Firmware is stored at : " << destPath << std::endl;
                             
                             std::filesystem::create_directories(directoryPath);
                             std::filesystem::rename(backupAppName.c_str(), destPath.c_str());
@@ -498,6 +499,7 @@ bool UdpClient::firmwareUpdate(const std::string& firmwarePath, const std::strin
             else
             {
                 std::cout << "Failed to copy the firmware." << std::endl;
+                rollbackOldFirmware(executableAppPath, backupAppName, originalAppName, command);
                 return false;
             }
         }
