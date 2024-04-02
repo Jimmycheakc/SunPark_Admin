@@ -13,4 +13,4 @@ cmake ..
 make -j4
 
 # Copy the built binaries and configuration file to the remote server
-scp admin root@192.168.2.150:/home/root/LinuxPBSSourceCode/LatestSourceCode/build/
+scp admin root@192.168.2.150:/home/root/carpark/

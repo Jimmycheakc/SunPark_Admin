@@ -7,7 +7,7 @@ class IniParser
 {
 
 public:
-    const std::string INI_FILE = "LinuxPBS.ini";
+    const std::string INI_FILE = "/home/root/carpark/Ini/LinuxPBS.ini";
 
     static IniParser* getInstance();
     void FnReadIniFile();
