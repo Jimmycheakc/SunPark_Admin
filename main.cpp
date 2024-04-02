@@ -75,7 +75,7 @@ int main() {
     try {
         io_service ioService;
         IniParser::getInstance()->FnReadIniFile();
-        UdpClient udpClient(ioService, IniParser::getInstance()->FnGetCentralDBServer(), 2009, 2010);
+        UdpClient udpClient(ioService, IniParser::getInstance()->FnGetCentralDBServer(), 2010, 2009);
 		udpClient.startSend("Admin is starting");
         ioService.run();
     } catch (std::exception& e) {
