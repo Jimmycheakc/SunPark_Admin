@@ -591,7 +591,7 @@ bool UdpClient::startStationSoftware()
             int result = std::system(command.c_str());
             if (result == 0)
             {
-                usleep(1000000);
+                usleep(20000000);
                 if (isProcessRunning(appName))
                 {
                     std::cout << "Process is running." << std::endl;
