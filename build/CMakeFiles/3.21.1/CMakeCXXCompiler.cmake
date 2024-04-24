@@ -1,5 +1,5 @@
-set(CMAKE_CXX_COMPILER "/home/sunpark/workspace/x7v2_20222_D/sysroots/x86_64-petalinux-linux/usr/bin/aarch64-xilinx-linux/aarch64-xilinx-linux-g++")
-set(CMAKE_CXX_COMPILER_ARG1 "  -mcpu=cortex-a72.cortex-a53 -march=armv8-a+crc -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security --sysroot=/home/sunpark/workspace/x7v2_20222_D/sysroots/cortexa72-cortexa53-xilinx-linux")
+set(CMAKE_CXX_COMPILER "/home/sunpark/workspace2/SDK_2022.1/sysroots/x86_64-petalinux-linux/usr/bin/aarch64-xilinx-linux/aarch64-xilinx-linux-g++")
+set(CMAKE_CXX_COMPILER_ARG1 "  -mcpu=cortex-a72.cortex-a53 -march=armv8-a+crc -fstack-protector-strong  -O2 -D_FORTIFY_SOURCE=2 -Wformat -Wformat-security -Werror=format-security --sysroot=/home/sunpark/workspace2/SDK_2022.1/sysroots/cortexa72-cortexa53-xilinx-linux")
 set(CMAKE_CXX_COMPILER_ID "GNU")
 set(CMAKE_CXX_COMPILER_VERSION "11.2.0")
 set(CMAKE_CXX_COMPILER_VERSION_INTERNAL "")
@@ -21,11 +21,11 @@ set(CMAKE_CXX_SIMULATE_VERSION "")
 
 
 
-set(CMAKE_AR "/home/sunpark/workspace/x7v2_20222_D/sysroots/x86_64-petalinux-linux/usr/bin/aarch64-xilinx-linux/aarch64-xilinx-linux-ar")
-set(CMAKE_CXX_COMPILER_AR "/home/sunpark/workspace/x7v2_20222_D/sysroots/x86_64-petalinux-linux/usr/bin/aarch64-xilinx-linux/aarch64-xilinx-linux-gcc-ar")
-set(CMAKE_RANLIB "/home/sunpark/workspace/x7v2_20222_D/sysroots/x86_64-petalinux-linux/usr/bin/aarch64-xilinx-linux/aarch64-xilinx-linux-ranlib")
-set(CMAKE_CXX_COMPILER_RANLIB "/home/sunpark/workspace/x7v2_20222_D/sysroots/x86_64-petalinux-linux/usr/bin/aarch64-xilinx-linux/aarch64-xilinx-linux-gcc-ranlib")
-set(CMAKE_LINKER "/home/sunpark/workspace/x7v2_20222_D/sysroots/x86_64-petalinux-linux/usr/bin/aarch64-xilinx-linux/aarch64-xilinx-linux-ld")
+set(CMAKE_AR "/home/sunpark/workspace2/SDK_2022.1/sysroots/x86_64-petalinux-linux/usr/bin/aarch64-xilinx-linux/aarch64-xilinx-linux-ar")
+set(CMAKE_CXX_COMPILER_AR "/home/sunpark/workspace2/SDK_2022.1/sysroots/x86_64-petalinux-linux/usr/bin/aarch64-xilinx-linux/aarch64-xilinx-linux-gcc-ar")
+set(CMAKE_RANLIB "/home/sunpark/workspace2/SDK_2022.1/sysroots/x86_64-petalinux-linux/usr/bin/aarch64-xilinx-linux/aarch64-xilinx-linux-ranlib")
+set(CMAKE_CXX_COMPILER_RANLIB "/home/sunpark/workspace2/SDK_2022.1/sysroots/x86_64-petalinux-linux/usr/bin/aarch64-xilinx-linux/aarch64-xilinx-linux-gcc-ranlib")
+set(CMAKE_LINKER "/home/sunpark/workspace2/SDK_2022.1/sysroots/x86_64-petalinux-linux/usr/bin/aarch64-xilinx-linux/aarch64-xilinx-linux-ld")
 set(CMAKE_MT "")
 set(CMAKE_COMPILER_IS_GNUCXX 1)
 set(CMAKE_CXX_COMPILER_LOADED 1)
@@ -85,7 +85,7 @@ endif()
 
 
 
-set(CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES "/home/sunpark/workspace/x7v2_20222_D/sysroots/cortexa72-cortexa53-xilinx-linux/usr/include/c++/11.2.0;/home/sunpark/workspace/x7v2_20222_D/sysroots/cortexa72-cortexa53-xilinx-linux/usr/include/c++/11.2.0/aarch64-xilinx-linux;/home/sunpark/workspace/x7v2_20222_D/sysroots/cortexa72-cortexa53-xilinx-linux/usr/include/c++/11.2.0/backward;/home/sunpark/workspace/x7v2_20222_D/sysroots/x86_64-petalinux-linux/usr/lib/aarch64-xilinx-linux/gcc/aarch64-xilinx-linux/11.2.0/include;/home/sunpark/workspace/x7v2_20222_D/sysroots/cortexa72-cortexa53-xilinx-linux/usr/lib/aarch64-xilinx-linux/11.2.0/include;/home/sunpark/workspace/x7v2_20222_D/sysroots/cortexa72-cortexa53-xilinx-linux/usr/local/include;/home/sunpark/workspace/x7v2_20222_D/sysroots/x86_64-petalinux-linux/usr/lib/aarch64-xilinx-linux/gcc/aarch64-xilinx-linux/11.2.0/include-fixed;/home/sunpark/workspace/x7v2_20222_D/sysroots/cortexa72-cortexa53-xilinx-linux/usr/include")
+set(CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES "/home/sunpark/workspace2/SDK_2022.1/sysroots/cortexa72-cortexa53-xilinx-linux/usr/include/c++/11.2.0;/home/sunpark/workspace2/SDK_2022.1/sysroots/cortexa72-cortexa53-xilinx-linux/usr/include/c++/11.2.0/aarch64-xilinx-linux;/home/sunpark/workspace2/SDK_2022.1/sysroots/cortexa72-cortexa53-xilinx-linux/usr/include/c++/11.2.0/backward;/home/sunpark/workspace2/SDK_2022.1/sysroots/x86_64-petalinux-linux/usr/lib/aarch64-xilinx-linux/gcc/aarch64-xilinx-linux/11.2.0/include;/home/sunpark/workspace2/SDK_2022.1/sysroots/cortexa72-cortexa53-xilinx-linux/usr/lib/aarch64-xilinx-linux/11.2.0/include;/home/sunpark/workspace2/SDK_2022.1/sysroots/cortexa72-cortexa53-xilinx-linux/usr/local/include;/home/sunpark/workspace2/SDK_2022.1/sysroots/x86_64-petalinux-linux/usr/lib/aarch64-xilinx-linux/gcc/aarch64-xilinx-linux/11.2.0/include-fixed;/home/sunpark/workspace2/SDK_2022.1/sysroots/cortexa72-cortexa53-xilinx-linux/usr/include")
 set(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES "stdc++;m;gcc_s;gcc;c;gcc_s;gcc")
-set(CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES "/home/sunpark/workspace/x7v2_20222_D/sysroots/x86_64-petalinux-linux/usr/lib/aarch64-xilinx-linux/gcc/aarch64-xilinx-linux/11.2.0;/home/sunpark/workspace/x7v2_20222_D/sysroots/cortexa72-cortexa53-xilinx-linux/lib;/home/sunpark/workspace/x7v2_20222_D/sysroots/cortexa72-cortexa53-xilinx-linux/usr/lib/aarch64-xilinx-linux/11.2.0;/home/sunpark/workspace/x7v2_20222_D/sysroots/cortexa72-cortexa53-xilinx-linux/usr/lib")
+set(CMAKE_CXX_IMPLICIT_LINK_DIRECTORIES "/home/sunpark/workspace2/SDK_2022.1/sysroots/x86_64-petalinux-linux/usr/lib/aarch64-xilinx-linux/gcc/aarch64-xilinx-linux/11.2.0;/home/sunpark/workspace2/SDK_2022.1/sysroots/cortexa72-cortexa53-xilinx-linux/lib;/home/sunpark/workspace2/SDK_2022.1/sysroots/cortexa72-cortexa53-xilinx-linux/usr/lib/aarch64-xilinx-linux/11.2.0;/home/sunpark/workspace2/SDK_2022.1/sysroots/cortexa72-cortexa53-xilinx-linux/usr/lib")
 set(CMAKE_CXX_IMPLICIT_LINK_FRAMEWORK_DIRECTORIES "")

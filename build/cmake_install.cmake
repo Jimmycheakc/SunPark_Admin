@@ -1,4 +1,4 @@
-# Install script for directory: /home/sunpark/workspace/LinuxPbs_KC/MyCppProject/admin
+# Install script for directory: /home/sunpark/workspace2/LinuxPbs_KC/MyCppProject/admin
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -39,7 +39,7 @@ endif()
 
 # Set default install directory permissions.
 if(NOT DEFINED CMAKE_OBJDUMP)
-  set(CMAKE_OBJDUMP "/home/sunpark/workspace/x7v2_20222_D/sysroots/x86_64-petalinux-linux/usr/bin/aarch64-xilinx-linux/aarch64-xilinx-linux-objdump")
+  set(CMAKE_OBJDUMP "/home/sunpark/workspace2/SDK_2022.1/sysroots/x86_64-petalinux-linux/usr/bin/aarch64-xilinx-linux/aarch64-xilinx-linux-objdump")
 endif()
 
 if(CMAKE_INSTALL_COMPONENT)
@@ -50,5 +50,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/home/sunpark/workspace/LinuxPbs_KC/MyCppProject/admin/build/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/home/sunpark/workspace2/LinuxPbs_KC/MyCppProject/admin/build/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

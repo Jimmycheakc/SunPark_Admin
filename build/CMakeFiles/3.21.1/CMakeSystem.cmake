@@ -3,7 +3,7 @@ set(CMAKE_HOST_SYSTEM_NAME "Linux")
 set(CMAKE_HOST_SYSTEM_VERSION "5.4.0-150-generic")
 set(CMAKE_HOST_SYSTEM_PROCESSOR "x86_64")
 
-include("/home/sunpark/workspace/x7v2_20222_D/sysroots/x86_64-petalinux-linux/usr/share/cmake/OEToolchainConfig.cmake")
+include("/home/sunpark/workspace2/SDK_2022.1/sysroots/x86_64-petalinux-linux/usr/share/cmake/OEToolchainConfig.cmake")
 
 set(CMAKE_SYSTEM "Linux")
 set(CMAKE_SYSTEM_NAME "Linux")

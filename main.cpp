@@ -441,7 +441,8 @@ bool UdpClient::firmwareUpdate(const std::string& firmwarePath, const std::strin
             std::string password = "Tdxh638*";
             std::string outputFolderPath = executableAppDirectoryPath;
 
-            std::string command = "x-terminal-emulator -e " + executableAppPath + " &";
+            //std::string command = "x-terminal-emulator -e " + executableAppPath + " &";
+            std::string command = executableAppPath + " &";
 
             // 2. Copy the firmware from other PC
             if (copyFirmware(firmwareName, mountPoint, firmwarePath, username, password, outputFolderPath))
@@ -564,7 +565,8 @@ bool UdpClient::startStationSoftware()
 {
     std::string appName = "linuxpbs";
     std::string executableAppPath = findExecutableFilePath(appName);
-    std::string command = "x-terminal-emulator -e " + executableAppPath + " &";
+    //std::string command = "x-terminal-emulator -e " + executableAppPath + " &";
+    std::string command = executableAppPath + " &";
 
     if (isProcessRunning(appName))
     {
