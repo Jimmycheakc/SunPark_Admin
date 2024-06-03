@@ -70,6 +70,228 @@ public:
     bool startStationSoftware();
 };
 
+class Watchdog
+{
+
+public:
+    Watchdog(boost::asio::io_service& io_service, int watchdogPort)
+        : socket_(io_service, boost::asio::ip::udp::endpoint(boost::asio::ip::udp::v4(), watchdogPort)),
+        timer_(io_service),
+        ackFailureCount_(0)
+    {
+    }
+
+    void start()
+    {
+        startReceive();
+        startTimer();
+    }
+
+private:
+
+    void startReceive()
+    {
+        socket_.async_receive_from(boost::asio::buffer(recvBuffer_), remoteEndpoint_,
+            [&](const boost::system::error_code& error, std::size_t bytes_transferred) {
+                if (!error)
+                {
+                    std::string receivedMessage(recvBuffer_.data(), bytes_transferred);
+                    if (receivedMessage == "Heartbeat")
+                    {
+                        std::cout << "Received heartbeat." << std::endl;
+                        ackFailureCount_ = 0;
+
+                        // Reset the timer for next heartbeat
+                        restartTimer();
+                    }
+                    else
+                    {
+                        std::cerr << "Received unexpected message: " << receivedMessage << std::endl;
+                    }
+                }
+                else
+                {
+                    std::cerr << "Error receiving message: " << error.message() << std::endl;
+                }
+
+                startReceive();
+            });
+    }
+
+    void startTimer()
+    {
+        timer_.expires_after(std::chrono::minutes(2));
+        std::cout << "Timer started." << std::endl;
+        timer_.async_wait([this](const boost::system::error_code& error) {
+            if (!error)
+            {
+                handleTimeout();
+            }
+            else
+            {
+                handleTimerError(error);
+            }
+        });
+    }
+
+    void restartTimer()
+    {
+        std::cout << "Restarting timer." << std::endl;
+        timer_.cancel();
+        startTimer();
+    }
+
+    void handleTimeout()
+    {
+        std::cerr << "Timeout: No heartbeat received within 1 minute. Perform restart action..." << std::endl;
+        ackFailureCount_++;
+        if (ackFailureCount_ >= 1)
+        {
+            ackFailureCount_ = 0;
+            startStationSoftware();
+        }
+
+        // Restart the timer to keep checking for the next timeout
+        startTimer();
+    }
+
+    void handleTimerError(const boost::system::error_code& error)
+    {
+        // Attempt to recover from the error by resetting the timer
+        if (error == boost::asio::error::operation_aborted) {
+            // Timer was cancelled, possibly by design. No need to take further action.
+            return;
+        }
+
+        try
+        {
+            std::cerr << "Timer Error: " << error.message() << std::endl;
+            startTimer();
+        }
+        catch (const std::exception& e)
+        {
+            std::cerr << "Exception while handling timer error: " << e.what() << std::endl;
+        }
+    }
+
+    bool isProcessRunning(const std::string& processName)
+    {
+        std::string command = "sudo pgrep " + processName + " > /dev/null";
+        int result = system(command.c_str());
+        return (result == 0);
+    }
+
+    bool killProcess(const std::string& processName)
+    {
+        std::string command = "sudo pkill -15 ";
+        command += processName;
+        int result = system(command.c_str());
+
+        if (result == 0)
+        {
+            std::cout << "Successfully sent SIGTERM signal to the application." << std::endl;
+        }
+        else
+        {
+            std::cout << "Failed to send SIGTERM signal." << std::endl;
+        }
+
+        return (result == 0);
+    }
+
+    std::string findExecutableFilePath(const std::string& processName)
+    {
+        std::array<char, 128> buffer;
+        std::string result;
+
+        std::string command = "find / -type f -executable -name " + processName + " 2>/dev/null";
+
+        std::unique_ptr<FILE, decltype(&pclose)> pipe(popen(command.c_str(), "r"), pclose);
+        if (!pipe)
+        {
+            std::cout << "popen() failed!" << std::endl;
+        }
+
+        while (fgets(buffer.data(), buffer.size(), pipe.get()) != nullptr)
+        {
+            result += buffer.data();
+            result.pop_back();
+        }
+
+        return result;
+    }
+
+    bool startStationSoftware()
+    {
+        std::string appName = "linuxpbs";
+        std::string executableAppPath = findExecutableFilePath(appName);
+        //std::string command = "x-terminal-emulator -e " + executableAppPath + " &";
+        std::string command = executableAppPath + " &";
+
+        if (isProcessRunning(appName))
+        {
+            std::cout << "Process is running and kill the process." << std::endl;
+            if (killProcess(appName))
+            {
+                usleep(1000000);
+            }
+            else
+            {
+                std::cout << "Unable to kill the process." << std::endl;
+            }
+        }
+
+        if (!isProcessRunning(appName))
+        {
+            mode_t permissions = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
+            std::cout << "Updating the executable file permissions..." << std::endl;
+            int retPermissions = chmod(executableAppPath.c_str(), permissions);
+            if (retPermissions == 0)
+            {
+                std::cout << "Successfully updated the executable file permissions." << std::endl;
+                std::cout << "Running the new firmware..." << std::endl;
+                int result = std::system(command.c_str());
+                if (result == 0)
+                {
+                    usleep(20000000);
+                    if (isProcessRunning(appName))
+                    {
+                        std::cout << "Process is running." << std::endl;
+                        return true;
+                    }
+                    else
+                    {
+                        std::cout << "Process not running." << std::endl;
+                        return false;
+                    }
+                }
+                else
+                {
+                    std::cout << "Unable to use command to start station software." << std::endl;
+                    return false;
+                }
+            }
+            else
+            {
+                std::cout << "Unable to change the executable file permission." << std::endl;
+                return false;
+            }
+            
+        }
+        else
+        {
+            std::cout << "Process not running." << std::endl;
+            return false;
+        }
+    }
+
+    boost::asio::ip::udp::socket socket_;
+    boost::asio::ip::udp::endpoint remoteEndpoint_;
+    std::array<char, 1024> recvBuffer_;
+    boost::asio::steady_timer timer_;
+    int ackFailureCount_;
+};
+
 int main() {
 
     try {
@@ -77,6 +299,8 @@ int main() {
         IniParser::getInstance()->FnReadIniFile();
         UdpClient udpClient(ioService, IniParser::getInstance()->FnGetCentralDBServer(), 2010, 2009);
 		udpClient.startSend("Admin is starting");
+        Watchdog watchdog(ioService, 9000);
+        watchdog.start();
         ioService.run();
     } catch (std::exception& e) {
         std::cerr << "Exception: " << e.what() << std::endl;
